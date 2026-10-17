@@ -9,17 +9,20 @@ def get_d_and_r(n: int) -> tuple[int, int]:
     count = (m & -m).bit_length() - 1
     return count, m >> count
 
+import gmpy2
 
 def mrt_worker(args: tuple[int, int, int, int]) -> bool:
     """Runs a single Miller-Rabin witness test. Returns True if composite."""
     n, m, count, a = args
-    b = pow(a, m, n)
+    n, m, a = gmpy2.mpz(n), gmpy2.mpz(m), gmpy2.mpz(a)
+
+    b = gmpy2.powmod(a, m, n)
 
     if b == 1 or b == n - 1:
         return False  # Probably prime for this base
 
     for _ in range(count - 1):
-        b = pow(b, 2, n)
+        b = gmpy2.powmod(b, 2, n)
         if b == n - 1:
             return False  # Probably prime for this base
         if b == 1:
